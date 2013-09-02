@@ -13,12 +13,13 @@ public class Try
 		Scanner s = new Scanner(System.in);
 		dsp.initDSP();
 		dsp.setVolume(25);
-			System.out.print("r: Radio");
-			System.out.print("v: Volume");
-			System.out.print("+: Increase Volume");
-			System.out.print("-: Decrease Volume");
-			System.out.print("s: Play sinusoid");
-			System.out.print("e: Exit");
+		System.out.println("r: Radio");
+		System.out.println("v: Volume");
+		System.out.println("+: Increase Volume");
+		System.out.println("-: Decrease Volume");
+		System.out.println("s: Play sinusoid");
+		System.out.println("mp3: Play MP3 file");
+		System.out.println("e: Exit");
 		while(!exit) 
 		{ 
 			System.out.print("Command: ");
