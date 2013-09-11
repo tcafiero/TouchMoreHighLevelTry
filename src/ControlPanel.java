@@ -2,7 +2,7 @@
 
 import java.io.*;
 import java.util.*;
-public class Try
+public class ControlPanel
 {
 	// Operations
 
@@ -12,15 +12,18 @@ public class Try
 		Infotainment device = new Infotainment();
 		Scanner input = new Scanner(System.in);
 		System.out.println("r: Radio");
-		System.out.println("<integer 0-30>: Volume");
+		System.out.println("v: Volume");
+		System.out.println("m: Toggle Mute");
 		System.out.println("+: Increase Volume");
 		System.out.println("-: Decrease Volume");
 		System.out.println("s: Play sinusoid");
 		System.out.println("mp3: Play MP3 file");
+		System.out.println("TAstart: Traffic Announcement Start");
+		System.out.println("TAend: Traffic Announcement End");
 		System.out.println("x: Exit");
 		while(!device.Exit) 
 		{ 
-			System.out.print("input: ");
+			System.out.print("> ");
 			if (input.hasNextInt())
 				device.UseValue(input.nextInt());
 			else device.Command(input.next());
