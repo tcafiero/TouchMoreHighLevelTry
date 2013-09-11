@@ -1,0 +1,5 @@
+open Command shell in windows
+change into dir ProduceExecutable
+run GenerateTry.jar.cmd
+at the end of run is produced Try.jar and dirs TouchMoreHighLevelTry and TouchMoreLowLevel
+
