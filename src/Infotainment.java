@@ -33,6 +33,12 @@ public class Infotainment
   
   private int Frequency = 98100;
   
+  private boolean TAstart = false;
+  
+  private boolean TAend = false;
+  
+  private int TAfrequency = 98100;
+  
   // \ART_SMG :: Created for state : Infotainment
   private RtsInfotainment_States RtsCurrent_Infotainment;
   
@@ -201,6 +207,23 @@ public class Infotainment
   {
   RtsCurrent_Entertainment = RtsInfotainmentEntertainment_States.RtsInfotainmentEntertainment_States_Tuner;
   
+  /* Entry Actions */
+  
+  // ## Action [4896eb64-2c87-4d53-a7ba-1391a10e4d64] 
+  if(TAstart)
+  {
+  dsp.set_frequency(TAfrequency, TYPE_BAND.FM_BAND, TYPE_SUB_BAND.AM_KW_BAND);
+  dsp.setVolume(Volume+3);
+  TAstart=false;
+  }
+  if(TAend)
+  {
+  dsp.set_frequency(Frequency, TYPE_BAND.FM_BAND, TYPE_SUB_BAND.AM_KW_BAND);
+  dsp.setVolume(Volume);
+  TAend=false;
+  }
+  // ## Action End 
+  
   }
   
   // \ART_SMG :: Created for state : Volume
@@ -297,8 +320,8 @@ public class Infotainment
   private boolean Command_In_Entertainment(String Code)
   {
   if (
-  // ## Guard [038d34ac-b85a-4fe9-a388-475540776274] 
-  Code.equalsIgnoreCase("x")
+  // ## Guard [61744307-935c-4bb1-ace3-3fc7fdfdefdf] 
+  Code.equalsIgnoreCase("taend")
   // ## Guard End 
   )
   {
@@ -306,9 +329,8 @@ public class Infotainment
   	/* Store the state */
   	RtsAttHistory_Entertainment = RtsCurrent_Entertainment;
   	
-  // ## Action [b953854a-3896-4fde-8880-fb07f652f5b3] 
-  System.out.println("Exit");
-  Exit=true;
+  // ## Action [19f09b46-8593-4df2-9e60-8ac211fc8c7a] 
+  TAend=true;
   // ## Action End 
   
   	RtsHistory_Entertainment(true);
@@ -316,8 +338,8 @@ public class Infotainment
   	return true;
   }
   if (
-  // ## Guard [b86a9e32-3388-4e87-b492-c3c9b014c226] 
-  Code.equalsIgnoreCase("-")
+  // ## Guard [faf0e7d8-d9db-4ddc-9c8b-2ab03e84a03f] 
+  Code.equalsIgnoreCase("m")
   // ## Guard End 
   )
   {
@@ -325,12 +347,28 @@ public class Infotainment
   	/* Store the state */
   	RtsAttHistory_Entertainment = RtsCurrent_Entertainment;
   	
-  // ## Action [cbddf3b0-2530-412b-9fee-603efeb02534] 
-  if(Volume > 0)
-  {
-  Volume--;
-  dsp.setVolume(Volume);
+  // ## Action [0d98c54b-6a1e-49a9-b9f2-5b0f9af7a3e6] 
+  if (MuteState) dsp.doDeMute();
+  else dsp.doMute();
+  MuteState=!MuteState;
+  // ## Action End 
+  
+  	RtsHistory_Entertainment(true);
+  	
+  	return true;
   }
+  if (
+  // ## Guard [17d79705-d98d-4cc0-9dc5-b8a9f8fe4bbc] 
+  Code.equalsIgnoreCase("tastart")
+  // ## Guard End 
+  )
+  {
+  	
+  	/* Store the state */
+  	RtsAttHistory_Entertainment = RtsCurrent_Entertainment;
+  	
+  // ## Action [6d834115-f4aa-4a60-914b-16532e8bcf62] 
+  TAstart=true;
   // ## Action End 
   
   	RtsHistory_Entertainment(true);
@@ -360,8 +398,8 @@ public class Infotainment
   	return true;
   }
   if (
-  // ## Guard [faf0e7d8-d9db-4ddc-9c8b-2ab03e84a03f] 
-  Code.equalsIgnoreCase("m")
+  // ## Guard [b86a9e32-3388-4e87-b492-c3c9b014c226] 
+  Code.equalsIgnoreCase("-")
   // ## Guard End 
   )
   {
@@ -369,10 +407,31 @@ public class Infotainment
   	/* Store the state */
   	RtsAttHistory_Entertainment = RtsCurrent_Entertainment;
   	
-  // ## Action [0d98c54b-6a1e-49a9-b9f2-5b0f9af7a3e6] 
-  if (MuteState) dsp.doDeMute();
-  else dsp.doMute();
-  MuteState=!MuteState;
+  // ## Action [cbddf3b0-2530-412b-9fee-603efeb02534] 
+  if(Volume > 0)
+  {
+  Volume--;
+  dsp.setVolume(Volume);
+  }
+  // ## Action End 
+  
+  	RtsHistory_Entertainment(true);
+  	
+  	return true;
+  }
+  if (
+  // ## Guard [038d34ac-b85a-4fe9-a388-475540776274] 
+  Code.equalsIgnoreCase("x")
+  // ## Guard End 
+  )
+  {
+  	
+  	/* Store the state */
+  	RtsAttHistory_Entertainment = RtsCurrent_Entertainment;
+  	
+  // ## Action [b953854a-3896-4fde-8880-fb07f652f5b3] 
+  System.out.println("Exit");
+  Exit=true;
   // ## Action End 
   
   	RtsHistory_Entertainment(true);
@@ -387,11 +446,15 @@ public class Infotainment
   {
   	
   // ## Action [d3a8c7db-a109-4965-b59a-ea15145e5178] 
+  try{
   dsp.setSource(DR_AUDIO_SOURCES.SRC_MP3);
   Runtime rt = Runtime.getRuntime();
-  System.out.println("aplay -D TDM1_O_ENT /home/root/arribba.wav");
-  //Process pr = rt.exec("aplay -D TDM1_O_ENT /home/root/arribba.wav");
+  Process pr = rt.exec("aplay -D TDM1_O_ENT /home/root/arribba.wav");
   dsp.setVolume(Volume);
+  } 
+  catch (Exception e){
+  System.out.println("Error running: aplay -D TDM1_O_ENT /home/root/arribba.wav");
+  }
   // ## Action End 
   
   	RtsEnter_Mp3Player();
@@ -425,8 +488,6 @@ public class Infotainment
   dsp.setSource(DR_AUDIO_SOURCES.SRC_TUNER);
   dsp.set_frequency(Frequency, TYPE_BAND.FM_BAND, TYPE_SUB_BAND.AM_KW_BAND);
   dsp.setVolume(Volume);
-  
-  
   // ## Action End 
   
   	RtsEnter_Tuner();
@@ -443,10 +504,7 @@ public class Infotainment
   	
   	return true;
   }
-  RtsEnter_Volume();
-  
-  return true;
-  
+  return false;
   }
   
   private boolean UseValue_In_Infotainment(int Value)
